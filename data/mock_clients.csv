@@ -1,0 +1,11 @@
+client_name,segment,launch_date_target,current_milestone,milestone_completion_pct,days_elapsed,days_to_launch,blockers,status
+Riverside Family Health,Mid-Market,2026-07-15,EHR Integration,40,18,21,API credentials pending from client IT,At Risk
+Sunrise Pediatric Group,SMB,2026-07-01,Staff Training,65,25,7,billing team unavailable for training window,At Risk
+Lakeside Internal Medicine,Enterprise,2026-08-10,Kickoff,10,5,47,Legal review of BAA delayed,Blocked
+Cascade Urgent Care Network,Mid-Market,2026-07-05,Billing Config,80,30,11,,On Track
+Harborview Behavioral Health,SMB,2026-06-28,Go-Live Prep,90,33,4,,On Track
+Meridian Orthopedics,Enterprise,2026-09-01,EHR Integration,35,15,69,Epic sandbox access not yet provisioned,Blocked
+Cornerstone Cardiology Partners,Mid-Market,2026-07-20,Staff Training,55,22,26,Clinical staff scheduling conflicts with trainers,At Risk
+Brightpath Dermatology,SMB,2026-06-30,Billing Config,75,28,6,,On Track
+Tidewater Oncology Associates,Enterprise,2026-06-15,Launched,100,40,0,,Launched
+Evergreen Women's Health,Mid-Market,2026-07-10,Go-Live Prep,95,35,16,,On Track
