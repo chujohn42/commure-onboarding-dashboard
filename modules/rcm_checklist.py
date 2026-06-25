@@ -45,9 +45,7 @@ def render():
         raw_result = call_claude(system_prompt, stack_description, max_tokens=1200)
 
     try:
-        cleaned = raw_result.strip().strip("`")
-        if cleaned.lower().startswith("json"):
-            cleaned = cleaned[4:]
+        cleaned = raw_result.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
         items = json.loads(cleaned)
     except json.JSONDecodeError:
         st.error("Could not parse Claude's response as JSON.")

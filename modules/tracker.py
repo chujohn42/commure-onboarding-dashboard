@@ -61,8 +61,6 @@ def render():
             raw_result = call_claude(system_prompt, user_message, max_tokens=1500)
 
         st.subheader("AI Risk Analysis")
-        st.write("Raw Claude response:")
-        st.code(raw_result)
 
         try:
             cleaned = raw_result.strip().strip("`")
