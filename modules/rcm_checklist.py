@@ -20,7 +20,7 @@ def render():
         placeholder="e.g. Uses Athelas for prior auth, manual billing, Epic EHR",
     )
 
-    if not st.button("Submit", use_container_width=True):
+    if not st.button("Generate Checklist", use_container_width=True):
         return
 
     if not stack_description.strip():

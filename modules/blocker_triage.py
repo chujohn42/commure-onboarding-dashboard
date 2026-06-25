@@ -22,7 +22,7 @@ def render():
 
     client_name = st.selectbox("Client", df["client_name"].tolist())
     blocker_text = st.text_area("Blocker Description", placeholder="Describe the blocker...")
-    submitted = st.button("Submit", use_container_width=True)
+    submitted = st.button("Triage Blocker", use_container_width=True)
 
     if not submitted:
         return

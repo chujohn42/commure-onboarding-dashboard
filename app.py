@@ -59,18 +59,20 @@ p, span, div, label {{
 }}
 
 .stButton > button {{
-    background-color: {ACCENT_TEAL};
-    color: {BG};
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
+    background-color: {ACCENT_TEAL} !important;
+    color: {BG} !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    height: 44px !important;
+    width: 100% !important;
     font-family: 'Inter', sans-serif;
 }}
 
 .stButton > button:hover {{
-    background-color: {ACCENT_TEAL};
-    opacity: 0.85;
-    color: {BG};
+    background-color: #00B89A !important;
+    color: {BG} !important;
 }}
 
 .sidebar-wordmark {{
