@@ -4,21 +4,25 @@ import streamlit as st
 
 from utils.data_loader import load_clients
 from utils.claude_client import call_claude
-
-SEVERITY_COLORS = {
-    "High": "#FF5C5C",
-    "Medium": "#F4B400",
-    "Low": "#00C9A7",
-}
+from utils.styles import (
+    ACCENT_TEAL, CARD_BG, CARD_BORDER, TEXT_MUTED, TEXT_PRIMARY, priority_badge,
+)
 
 
 def render():
     st.header("Blocker Triage")
+    st.markdown(
+        f"<div style='color:{TEXT_MUTED};font-size:14px;margin-bottom:16px;'>"
+        "Describe a client blocker and let Claude classify it, recommend an owner, "
+        "and draft a stakeholder message.</div>",
+        unsafe_allow_html=True,
+    )
+
     df = load_clients()
 
     client_name = st.selectbox("Client", df["client_name"].tolist())
     blocker_text = st.text_area("Blocker Description", placeholder="Describe the blocker...")
-    submitted = st.button("Submit")
+    submitted = st.button("Submit", use_container_width=True)
 
     if not submitted:
         return
@@ -45,28 +49,54 @@ def render():
         data = json.loads(cleaned)
     except json.JSONDecodeError:
         st.error("Could not parse Claude's response as JSON.")
-        st.code(raw_result)
         return
 
     severity = data.get("severity", "Medium")
-    color = SEVERITY_COLORS.get(severity, "#9FA6B2")
 
+    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+
+    left_col, right_col = st.columns(2)
+    with left_col:
+        st.markdown(
+            f"""
+            <div style='background-color:{CARD_BG};border:1px solid {CARD_BORDER};
+            border-radius:10px;padding:16px;height:100%;'>
+                <div style='color:{TEXT_MUTED};font-size:11px;text-transform:uppercase;
+                letter-spacing:1px;margin-bottom:6px;'>Blocker Type</div>
+                <div style='color:{TEXT_PRIMARY};font-size:15px;margin-bottom:14px;'>
+                {data.get('blocker_type', 'N/A')}</div>
+                <div style='color:{TEXT_MUTED};font-size:11px;text-transform:uppercase;
+                letter-spacing:1px;margin-bottom:6px;'>Severity</div>
+                {priority_badge(severity)}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with right_col:
+        steps_html = "".join(f"<li style='margin-bottom:4px;'>{s}</li>" for s in data.get("resolution_steps", []))
+        st.markdown(
+            f"""
+            <div style='background-color:{CARD_BG};border:1px solid {CARD_BORDER};
+            border-radius:10px;padding:16px;height:100%;'>
+                <div style='color:{TEXT_MUTED};font-size:11px;text-transform:uppercase;
+                letter-spacing:1px;margin-bottom:6px;'>Recommended Owner</div>
+                <div style='color:{TEXT_PRIMARY};font-size:15px;margin-bottom:14px;'>
+                {data.get('recommended_owner', 'N/A')}</div>
+                <div style='color:{TEXT_MUTED};font-size:11px;text-transform:uppercase;
+                letter-spacing:1px;margin-bottom:6px;'>Resolution Steps</div>
+                <ul style='color:{TEXT_PRIMARY};font-size:14px;padding-left:18px;margin:0;'>
+                {steps_html}</ul>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
     st.markdown(
-        f"""
-        <div style='background-color:#1A1D27;border:1px solid {color};
-        border-radius:12px;padding:16px;margin-bottom:12px;'>
-        <b>Blocker Type:</b> {data.get('blocker_type', 'N/A')}<br>
-        <b>Severity:</b> <span style='color:{color};'>{severity}</span><br>
-        <b>Recommended Owner:</b> {data.get('recommended_owner', 'N/A')}
-        </div>
-        """,
+        f"<div style='color:{ACCENT_TEAL};font-size:11px;text-transform:uppercase;"
+        f"letter-spacing:1px;margin-bottom:6px;'>Draft Message</div>",
         unsafe_allow_html=True,
     )
-
-    st.markdown("**Resolution Steps:**")
-    for step in data.get("resolution_steps", []):
-        st.markdown(f"- {step}")
-
-    st.markdown("**Stakeholder Message:**")
     st.code(data.get("stakeholder_message", ""), language="text")
     st.caption("Copy the message above using the copy icon in the top-right of the code block.")

@@ -4,21 +4,13 @@ import re
 import streamlit as st
 
 from utils.claude_client import call_claude
+from utils.styles import ACCENT_TEAL, TEXT_PRIMARY, priority_badge
 
-PRIORITY_COLORS = {
-    "High": "#FF5C5C",
-    "Medium": "#F4B400",
-    "Low": "#00C9A7",
+PRIORITY_MARKDOWN_COLORS = {
+    "High": None,
+    "Medium": "gray",
+    "Low": "gray",
 }
-
-
-def _priority_badge(priority: str) -> str:
-    color = PRIORITY_COLORS.get(priority, "#9FA6B2")
-    return (
-        f"<span style='background-color:{color}22;color:{color};"
-        f"border:1px solid {color};border-radius:8px;padding:2px 10px;"
-        f"font-size:0.85em;'>{priority}</span>"
-    )
 
 
 def render():
@@ -28,7 +20,7 @@ def render():
         placeholder="e.g. Uses Athelas for prior auth, manual billing, Epic EHR",
     )
 
-    if not st.button("Submit"):
+    if not st.button("Submit", use_container_width=True):
         return
 
     if not stack_description.strip():
@@ -58,12 +50,23 @@ def render():
         categories.setdefault(item.get("category", "Other"), []).append(item)
 
     for category, tasks in categories.items():
-        st.subheader(category)
+        st.markdown(
+            f"""
+            <div style='margin-top:20px;margin-bottom:10px;'>
+                <span style='font-size:16px;font-weight:700;color:{TEXT_PRIMARY};'>{category}</span>
+                <div style='border-bottom:2px solid {ACCENT_TEAL};width:60px;margin-top:4px;'></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         for idx, task in enumerate(tasks):
             label = task.get("item", "")
             priority = task.get("priority", "Medium")
+            md_color = PRIORITY_MARKDOWN_COLORS.get(priority)
+            checkbox_label = f":{md_color}[{label}]" if md_color else label
+
             col1, col2 = st.columns([4, 1])
             with col1:
-                st.checkbox(label, key=f"{category}-{idx}")
+                st.checkbox(checkbox_label, key=f"{category}-{idx}")
             with col2:
-                st.markdown(_priority_badge(priority), unsafe_allow_html=True)
+                st.markdown(priority_badge(priority), unsafe_allow_html=True)

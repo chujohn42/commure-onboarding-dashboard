@@ -3,18 +3,21 @@ import streamlit as st
 
 from utils.data_loader import load_clients
 from utils.claude_client import call_claude
+from utils.styles import ACCENT_TEAL, CARD_BG, CARD_BORDER, TEXT_PRIMARY
 
 
 def _bar_chart(title: str, value: float, suffix: str = ""):
-    fig = go.Figure(go.Bar(x=[title], y=[value], marker_color="#00C9A7"))
+    fig = go.Figure(go.Bar(x=[title], y=[value], marker_color=ACCENT_TEAL))
     fig.update_layout(
         title=title,
         yaxis_title=suffix,
         height=300,
-        plot_bgcolor="#0F1117",
-        paper_bgcolor="#0F1117",
-        font_color="#FAFAFA",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(22,24,31,1)",
+        font_color="#E6EDF3",
     )
+    fig.update_xaxes(gridcolor="#2A2D3A")
+    fig.update_yaxes(gridcolor="#2A2D3A")
     return fig
 
 
@@ -44,9 +47,9 @@ def render():
     col3.plotly_chart(_bar_chart("Avg Time to Launch", avg_time_to_launch, "days"), use_container_width=True)
     col4.plotly_chart(_bar_chart("At-Risk Rate", at_risk_rate, "%"), use_container_width=True)
 
-    st.divider()
+    st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-    if st.button("Generate Weekly Ops Brief"):
+    if st.button("Generate Weekly Ops Brief", use_container_width=True):
         with st.spinner("Generating ops brief with Claude..."):
             system_prompt = (
                 "You are a healthcare SaaS operations VP writing a weekly onboarding brief. "
@@ -61,5 +64,17 @@ def render():
             )
             brief = call_claude(system_prompt, user_message, max_tokens=800)
 
-        st.success("Weekly Ops Brief")
-        st.markdown(brief)
+        st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style='background-color:{CARD_BG};border:1px solid {CARD_BORDER};
+            border-left:3px solid {ACCENT_TEAL};border-radius:10px;padding:20px;'>
+                <div style='color:{ACCENT_TEAL};font-size:11px;text-transform:uppercase;
+                letter-spacing:1px;margin-bottom:10px;'>Weekly Ops Brief</div>
+                <div style='color:{TEXT_PRIMARY};font-size:15px;line-height:1.7;'>
+                {brief.replace(chr(10), '<br><br>')}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
