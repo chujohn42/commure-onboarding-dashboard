@@ -46,12 +46,11 @@ def render():
         raw_result = call_claude(system_prompt, stack_description, max_tokens=1200)
 
     try:
-        clean = re.sub(r'^```(?:json)?\s*', '', raw_result.strip())
-        clean = re.sub(r'```\s*$', '', clean).strip()
+        raw = raw_result.strip()
+        clean = re.sub(r'```(?:json)?', '', raw).strip()
         items = json.loads(clean)
     except json.JSONDecodeError:
         st.error("Could not parse Claude's response as JSON.")
-        st.code(raw_result)
         return
 
     categories = {}
